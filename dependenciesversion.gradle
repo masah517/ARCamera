@@ -1,0 +1,10 @@
+ext{
+    deps = [:]
+
+    def sceneFormVersion = "1.20.2"
+    deps.sceneForm = "com.gorisse.thomas.sceneform:sceneform:$sceneFormVersion"
+
+    def ktxVersion = "1.4.0"
+    deps.activityKtx = "androidx.activity:activity-ktx:$ktxVersion"
+    deps.fragmentKtx = "androidx.fragment:fragment-ktx:$ktxVersion"
+}
