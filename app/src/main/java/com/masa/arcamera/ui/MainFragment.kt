@@ -66,7 +66,7 @@ class MainFragment : Fragment() {
         private const val MIMETYPE = "image/png"
 
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             MainFragment().apply {
                 arguments = Bundle().apply {
                 }
@@ -117,25 +117,36 @@ class MainFragment : Fragment() {
     }
 
     private suspend fun fetchModels() {
+        //ARモデルのローディング
+
         model = ModelRenderable.builder()
             .setSource(context, Uri.parse("models/halloween.glb"))
             .setIsFilamentGltf(true)
             .await()
     }
 
+    /**
+     * Scene空間がタップされた時に呼び出されるメソッド
+     * @param hitResult: ユーザーがタップした空間の点に関連する情報を持ったオブジェクト
+     * @param plane: ARモデルをSceneに配置する平面
+     * @param motionEvent: ユーザーのジェスチャー(Pinch、Rotate、Dragなど)を処理するイベントクラス
+     */
     private fun onPlaneTapped(hitResult: HitResult, plane: Plane, motionEvent: MotionEvent) {
         if (model == null) {
             Toast.makeText(context, "Loading AR Model...", Toast.LENGTH_SHORT).show()
             return
         }
 
+        initScene(hitResult)
+    }
+
+    private fun initScene(hitResult: HitResult){
         arScene.addChild(AnchorNode(hitResult.createAnchor()).apply {
             addChild(TransformableNode(arFragment.transformationSystem).apply {
                 renderable = model
                 renderableInstance.animate(true).start()
             })
-        }
-        )
+        })
     }
 
     private fun takePhoto() {
@@ -150,6 +161,10 @@ class MainFragment : Fragment() {
         Bitmap.Config.ARGB_8888
     )
 
+    /**
+     * 表示している画面のsクリーンキャプチャを実行するメソッド
+     * @param bitmap: 保存したい画像のBitmap
+     */
     private fun captureScreen(bitmap: Bitmap) {
 
         // Handlerを作成して、画像のローディングをオフロードする
@@ -174,6 +189,11 @@ class MainFragment : Fragment() {
         }, Handler(pixelHandlerThread.looper))
     }
 
+    /**
+     * BitMapを端末に保存する処理
+     * @param bitmap: 保存したい画像のBitmap
+     * @param filename: 保存したい画像のファイル名
+     */
     @Throws(IOException::class)
     private fun saveBitmapToDisk(bitmap: Bitmap, filename: String) {
         val out = File(filename)
