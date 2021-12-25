@@ -1,7 +1,7 @@
 ext{
     deps = [:]
 
-    def sceneFormVersion = "1.20.2"
+    def sceneFormVersion = "1.20.3"
     deps.sceneForm = "com.gorisse.thomas.sceneform:sceneform:$sceneFormVersion"
 
     def ktxVersion = "1.4.0"
